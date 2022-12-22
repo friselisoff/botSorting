@@ -1,0 +1,15 @@
+{
+  "name": "lobot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mineflayer": "github:rtm516/mineflayer",
+    "mineflayer-pathfinder": "^2.4.1"
+  }
+}
