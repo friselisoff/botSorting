@@ -78,20 +78,19 @@ module.exports = bot => {
 
         await genericHelper.sleep(500)
         const sortingCategoryRawCopy = { ...sortingCategoryRaw }
-        let selectedCat = ''
-        await Promise.all(sortChest.containerItems().map(async e => {
-          const cat = findCategory(e.name)
+        const selectedCategories = []
+        for (const item of sortChest.containerItems()) {
+          const cat = findCategory(item.name)
           if (cat) {
-            if (selectedCat === '') {
-              selectedCat = cat
+            if (!(cat in selectedCategories)) {
+              selectedCategories.push(cat)
             }
-            if (cat === selectedCat) {
-              await sortChest.withdraw(e.type, null, e.count).catch(console.error)
-            }
-          } else if (!sortingCategoryRawCopy['Not Sorted'].includes(e.name)) {
-            sortingCategoryRawCopy['Not Sorted'].push(e.name)
+
+            await sortChest.withdraw(item.type, null, item.count).catch(() => {})
+          } else if (!sortingCategoryRawCopy['Not Sorted'].includes(item.name)) {
+            sortingCategoryRawCopy['Not Sorted'].push(item.name)
           }
-        }))
+        }
 
         fs.writeFileSync(sortingCategoryFile, JSON.stringify(sortingCategoryRawCopy, null, 2))
 
@@ -99,29 +98,31 @@ module.exports = bot => {
 
         sortChest.close()
 
-        if (selectedCat !== '') {
-          const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1].toUpperCase() === selectedCat)
+        if (selectedCategories.length !== 0) {
+          for (const selectedCat of selectedCategories) {
+            const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1].toUpperCase() === selectedCat)
 
-          if (selectedSign) {
-            await bot.pathfinder.goto(new GoalGetToBlock(selectedSign[1].position.x - 1, selectedSign[1].position.y, selectedSign[1].position.z))
+            if (selectedSign) {
+              await bot.pathfinder.goto(new GoalGetToBlock(selectedSign[1].position.x - 1, selectedSign[1].position.y, selectedSign[1].position.z))
 
-            const blockchest = bot.blockAt(selectedSign[1].position)
-            const chest = await bot.openChest(blockchest)
-            await Promise.all(bot.inventory.items().map(async e => {
-              const cat = findCategory(e.name)
-              if (cat) {
-                if (cat === selectedCat) {
-                  await chest.deposit(e.type, null, e.count).catch(console.error)
+              const blockchest = bot.blockAt(selectedSign[1].position)
+              const chest = await bot.openChest(blockchest)
+              await Promise.all(bot.inventory.items().map(async e => {
+                const cat = findCategory(e.name)
+                if (cat) {
+                  if (cat === selectedCat) {
+                    await chest.deposit(e.type, null, e.count).catch(console.error)
+                  }
                 }
-              }
-            }))
+              }))
 
-            await genericHelper.sleep(1000)
+              await genericHelper.sleep(1000)
 
-            chest.close()
-          } else {
-            console.log(`Unable to find category chest for '${selectedCat}'`)
-            // TODO Return item back to sort chest
+              chest.close()
+            } else {
+              console.log(`Unable to find category chest for '${selectedCat}'`)
+              // TODO Return item back to sort chest
+            }
           }
         }
         // console.log(signs.map(e => e[0].signText.trim()), signs.map(e => e[1].name), signs.length)
