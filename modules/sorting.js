@@ -57,7 +57,7 @@ module.exports = bot => {
 
           const match = signText.match(categoryRegex)
           if (!match) return false
-          const category = match[1]
+          const category = match[1].toUpperCase()
 
           return category in sortingCategoryRaw
         }).map(e => {
@@ -100,7 +100,7 @@ module.exports = bot => {
         sortChest.close()
 
         if (selectedCat !== '') {
-          const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1] === selectedCat)
+          const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1].toUpperCase() === selectedCat)
 
           if (selectedSign) {
             await bot.pathfinder.goto(new GoalGetToBlock(selectedSign[1].position.x - 1, selectedSign[1].position.y, selectedSign[1].position.z))
