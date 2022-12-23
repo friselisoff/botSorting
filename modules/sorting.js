@@ -4,10 +4,10 @@ const { GoalGetToBlock } = require('mineflayer-pathfinder').goals
 const mcData = require('minecraft-data')('1.19.2')
 const genericHelper = require('../GenericHelpers')
 const fs = require('fs')
-const { cwd } = require('process')
 
 let isSorting = false
 const categoryRegex = /\[(.*?)\]/
+const sortingCategoryFile = 'sortingCategory.json'
 
 /**
  * @param {mineflayer.Bot} bot // to enable intellisense
@@ -15,9 +15,8 @@ const categoryRegex = /\[(.*?)\]/
 module.exports = bot => {
   bot.on('spawn', () => {
     setInterval(async () => {
-      const sortingCategoryRaw = require('../sortingCategory.json')
+      const sortingCategoryRaw = fs.existsSync(sortingCategoryFile) ? JSON.parse(fs.readFileSync(sortingCategoryFile)) : {}
       const sortingCategory = Object.entries(sortingCategoryRaw)
-      delete require.cache[require.resolve('../sortingCategory.json')]
 
       const findCategory = (itemName) => {
         for (const k in sortingCategory) {
@@ -82,7 +81,7 @@ module.exports = bot => {
           }
         }))
 
-        fs.writeFileSync(cwd() + '/sortingCategory.json', JSON.stringify(sortingCategoryRawCopy, null, 2))
+        fs.writeFileSync(sortingCategoryFile, JSON.stringify(sortingCategoryRawCopy, null, 2))
 
         await genericHelper.sleep(1000)
 
