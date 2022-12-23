@@ -4,10 +4,18 @@ const { GoalGetToBlock } = require('mineflayer-pathfinder').goals
 const mcData = require('minecraft-data')('1.19.2')
 const genericHelper = require('../GenericHelpers')
 const fs = require('fs')
+const { Vec3 } = require('vec3')
 
 let isSorting = false
 const categoryRegex = /\[(.*?)\]/
 const sortingCategoryFile = 'sortingCategory.json'
+
+const CARDINALS = {
+  north: new Vec3(0, 0, -1),
+  south: new Vec3(0, 0, 1),
+  west: new Vec3(-1, 0, 0),
+  east: new Vec3(1, 0, 0)
+}
 
 /**
  * @param {mineflayer.Bot} bot // to enable intellisense
@@ -30,7 +38,7 @@ module.exports = bot => {
 
       const comparator = bot.findBlock({
         point: bot.entity.position,
-        matching: (block) => block && block.type === mcData.blocksByName.comparator.id
+        matching: (block) => block.name === 'comparator'
       })
 
       if (comparator && !isSorting && comparator._properties.powered) {
@@ -39,42 +47,48 @@ module.exports = bot => {
           maxDistance: 50,
           count: 1000,
           point: bot.entity.position,
-          matching: (block) => block.name === 'oak_wall_sign'
+          matching: (block) => block.name.endsWith('_wall_sign')
         }).filter(e => {
           const signBlock = bot.blockAt(e)
           const signText = signBlock.signText.trim()
-          const chestBlock = bot.blockAt(e.offset(-1, 0, 0))
+          const chestOffset = CARDINALS[signBlock._properties.facing].scaled(-1)
+          const chestBlock = bot.blockAt(e.offset(chestOffset.x, 0, chestOffset.z))
 
-          if (chestBlock.name !== 'chest') return false
-          if (signText === 'PUT ITEM TO SORT\nHERE') return false
+          if (!chestBlock || chestBlock.name !== 'chest') return false
+          if (signText === 'PUT ITEM TO SORT\nHERE') return false // Not sure this is needed due to the regex
 
           const match = signText.match(categoryRegex)
           if (!match) return false
           const category = match[1]
 
           return category in sortingCategoryRaw
-        }).map(e => [bot.blockAt(e), bot.blockAt(e.offset(-3, 1, 0))])
+        }).map(e => {
+          const signBlock = bot.blockAt(e)
+          const chestOffset = CARDINALS[signBlock._properties.facing].scaled(-1)
+          return [signBlock, bot.blockAt(e.offset(chestOffset.x * 3, 1, chestOffset.z * 3))]
+        })
 
         await bot.pathfinder.goto(new GoalGetToBlock(comparator.position.x - 1, comparator.position.y, comparator.position.z))
 
-        const blocksortchest = bot.blockAt(comparator.position.offset(1, 0, 0))
-        const sortchest = await bot.openChest(blocksortchest)
+        const sortChestOffset = CARDINALS[comparator._properties.facing]
+        const sortChestBlock = bot.blockAt(comparator.position.offset(sortChestOffset.x, 0, sortChestOffset.z))
+        const sortChest = await bot.openChest(sortChestBlock)
 
         await Promise.all(bot.inventory.items().map(async e => {
-          await sortchest.deposit(e.type, null, e.count).catch(console.error)
+          await sortChest.deposit(e.type, null, e.count).catch(console.error)
         }))
 
         await genericHelper.sleep(500)
         const sortingCategoryRawCopy = { ...sortingCategoryRaw }
         let selectedCat = ''
-        await Promise.all(sortchest.containerItems().map(async e => {
+        await Promise.all(sortChest.containerItems().map(async e => {
           const cat = findCategory(e.name)
           if (cat) {
             if (selectedCat === '') {
               selectedCat = cat
             }
             if (cat === selectedCat) {
-              await sortchest.withdraw(e.type, null, e.count).catch(console.error)
+              await sortChest.withdraw(e.type, null, e.count).catch(console.error)
             }
           } else if (!sortingCategoryRawCopy['Not Sorted'].includes(e.name)) {
             sortingCategoryRawCopy['Not Sorted'].push(e.name)
@@ -85,7 +99,7 @@ module.exports = bot => {
 
         await genericHelper.sleep(1000)
 
-        sortchest.close()
+        sortChest.close()
 
         if (selectedCat !== '') {
           const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1] === selectedCat)
