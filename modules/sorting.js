@@ -53,7 +53,7 @@ module.exports = bot => {
           if (!match) return false
           const category = match[1]
 
-          return category in sortingCategory
+          return category in sortingCategoryRaw
         }).map(e => [bot.blockAt(e), bot.blockAt(e.offset(-3, 1, 0))])
 
         await bot.pathfinder.goto(new GoalGetToBlock(comparator.position.x - 1, comparator.position.y, comparator.position.z))
