@@ -89,24 +89,29 @@ module.exports = bot => {
         sortchest.close()
 
         if (selectedCat !== '') {
-          const selectedSign = signs.find(e => e[0].signText.trim().match(/\[(.*?)\]/)[1] === selectedCat)
+          const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1] === selectedCat)
 
-          await bot.pathfinder.goto(new GoalGetToBlock(selectedSign[1].position.x - 1, selectedSign[1].position.y, selectedSign[1].position.z))
+          if (selectedSign) {
+            await bot.pathfinder.goto(new GoalGetToBlock(selectedSign[1].position.x - 1, selectedSign[1].position.y, selectedSign[1].position.z))
 
-          const blockchest = bot.blockAt(selectedSign[1].position)
-          const chest = await bot.openChest(blockchest)
-          await Promise.all(bot.inventory.items().map(async e => {
-            const cat = findCategory(e.name)
-            if (cat) {
-              if (cat === selectedCat) {
-                await chest.deposit(e.type, null, e.count).catch(console.error)
+            const blockchest = bot.blockAt(selectedSign[1].position)
+            const chest = await bot.openChest(blockchest)
+            await Promise.all(bot.inventory.items().map(async e => {
+              const cat = findCategory(e.name)
+              if (cat) {
+                if (cat === selectedCat) {
+                  await chest.deposit(e.type, null, e.count).catch(console.error)
+                }
               }
-            }
-          }))
+            }))
 
-          await genericHelper.sleep(1000)
+            await genericHelper.sleep(1000)
 
-          chest.close()
+            chest.close()
+          } else {
+            console.log(`Unable to find category chest for '${selectedCat}'`)
+            // TODO Return item back to sort chest
+          }
         }
         // console.log(signs.map(e => e[0].signText.trim()), signs.map(e => e[1].name), signs.length)
         isSorting = false
