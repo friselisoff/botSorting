@@ -7,6 +7,7 @@ const fs = require('fs')
 const { cwd } = require('process')
 
 let isSorting = false
+const categoryRegex = /\[(.*?)\]/
 
 /**
  * @param {mineflayer.Bot} bot // to enable intellisense
@@ -42,7 +43,17 @@ module.exports = bot => {
           matching: (block) => block.name === 'oak_wall_sign'
         }).filter(e => {
           const signBlock = bot.blockAt(e)
-          return bot.blockAt(e.offset(-1, 0, 0)).name === 'chest' && signBlock.signText.trim() !== 'PUT ITEM TO SORT\nHERE' && !!sortingCategory.find((v) => signBlock.signText.trim().match(/\[(.*?)\]/) && signBlock.signText.trim().match(/\[(.*?)\]/)[1] === v[0])
+          const signText = signBlock.signText.trim()
+          const chestBlock = bot.blockAt(e.offset(-1, 0, 0))
+
+          if (chestBlock.name !== 'chest') return false
+          if (signText === 'PUT ITEM TO SORT\nHERE') return false
+
+          const match = signText.match(categoryRegex)
+          if (!match) return false
+          const category = match[1]
+
+          return category in sortingCategory
         }).map(e => [bot.blockAt(e), bot.blockAt(e.offset(-3, 1, 0))])
 
         await bot.pathfinder.goto(new GoalGetToBlock(comparator.position.x - 1, comparator.position.y, comparator.position.z))
