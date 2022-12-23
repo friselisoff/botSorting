@@ -82,7 +82,7 @@ module.exports = bot => {
           }
         }))
 
-        fs.writeFileSync(cwd() + '/sortingCategory.json', JSON.stringify(sortingCategoryRawCopy, null, 4))
+        fs.writeFileSync(cwd() + '/sortingCategory.json', JSON.stringify(sortingCategoryRawCopy, null, 2))
 
         await genericHelper.sleep(1000)
 
