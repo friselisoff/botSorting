@@ -1,7 +1,6 @@
 const mineflayer = require('mineflayer') // eslint-disable-line
 
 const { GoalGetToBlock } = require('mineflayer-pathfinder').goals
-const mcData = require('minecraft-data')('1.19.2')
 const genericHelper = require('../GenericHelpers')
 const fs = require('fs')
 const { Vec3 } = require('vec3')
@@ -55,7 +54,6 @@ module.exports = bot => {
           const chestBlock = bot.blockAt(e.offset(chestOffset.x, 0, chestOffset.z))
 
           if (!chestBlock || chestBlock.name !== 'chest') return false
-          if (signText === 'PUT ITEM TO SORT\nHERE') return false // Not sure this is needed due to the regex
 
           const match = signText.match(categoryRegex)
           if (!match) return false
