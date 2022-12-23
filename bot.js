@@ -6,20 +6,18 @@ const GenericHelpers = require('./GenericHelpers')
 const fs = require('fs')
 const path = require('path')
 
-const { Vec3 } = require('vec3')
-
 const bot = mineflayer.createBot({
   host: "65.109.165.130",
   username: 'dkskkffkdkzifkz@gmail.com',
   auth: 'microsoft',
   disableChatSigning: true,
   physicsEnabled: true
-});
+})
 
 bot.loadPlugin(ChatHelper)
 bot.loadPlugin(pathfinder)
 
-function injectModules(bot) {
+function injectModules (bot) {
   const MODULES_DIRECTORY = path.join(__dirname, 'modules')
   const modules = fs
     .readdirSync(MODULES_DIRECTORY) // find the plugins
@@ -39,7 +37,7 @@ bot.on('login', () => {
 
   // Round positions to bypass the anti-human check
   const handler = {
-    get(target, prop, receiver) {
+    get (target, prop, receiver) {
       if (prop in target && (typeof target[prop] !== 'function' || /^\s*class\s+/.test(target[prop].toString()))) {
         return Reflect.get(...arguments)
       }
