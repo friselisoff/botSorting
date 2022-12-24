@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+header, main {
+  padding: 0px 5px;
+}
+
+header {
+  padding-bottom: 5px;
+}
+
+.btn {
+  color: #FFFFFF;
+  background-color: #3498DB;
+  padding: 5px;
+  border: 2px solid #2980B9;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn:active {
+  background-color: #2980B9;
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.title {
+  color: #3F3F3F;
+  font-family: MinecraftSeven;
+  font-weight: normal;
+  font-size: 20px;
+  padding-bottom: 8px;
+}
+
+.category {
+  background-color: #C6C6C6;
+
+  border: 2px solid #000000;
+  border-radius: 6px;
+  box-shadow: inset 4px 4px 0 #FFFFFF, inset -4px -4px 0 #555555;
+
+  padding: 12px;
+  padding-top: 10px;
+}
+
+.category-test {
+  border: 0;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 2px #000000, inset 6px 6px 0 #ffffff, inset -6px -6px 0 #555555;
+
+  /* https://pixelcorners.lukeb.co.uk/?radius=4&multiplier=2 */
+  clip-path: polygon(
+    0px 4px,
+    2px 4px,
+    2px 2px,
+    4px 2px,
+    4px 0px,
+    calc(100% - 4px) 0px,
+    calc(100% - 4px) 2px,
+    calc(100% - 2px) 2px,
+    calc(100% - 2px) 4px,
+    100% 4px,
+    100% calc(100% - 4px),
+    calc(100% - 2px) calc(100% - 4px),
+    calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 4px) calc(100% - 2px),
+    calc(100% - 4px) 100%,
+    4px 100%,
+    4px calc(100% - 2px),
+    2px calc(100% - 2px),
+    2px calc(100% - 4px),
+    0px calc(100% - 4px)
+  );
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  width: 360px;
+}
+
+.item {
+  width: 32px;
+  height: 32px;
+  background-color: #8B8B8B;
+  box-shadow: inset 2px 2px 0 #00000074, inset -2px -2px 0 #FFFFFF;
+  padding: 2px;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Home</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' type='text/css' media='screen' href='css/main.css'>
+  <link rel='stylesheet' type='text/css' href='fonts/MinecraftSeven.css'>
+  <script src='js/main.js'></script>
+</head>
+<body>
+  <header>
+    <h1>Sorting Bot Categories</h1>
+    <a class='btn' href="/">Refresh</a>
+    <a class='btn' href="#" onclick="newCategory()">New</a>
+    <a class='btn' href="#" onclick="saveCategories()">Save</a>
+  </header>
+  <main>
+    <% for (const category in categories) { %>
+      <div class="category" id="<%= category %>" ondragover="categoryDragOver(event)" ondrop="categoryDrop(event)">
+        <div class="title"><%= category.charAt(0).toUpperCase() + category.substr(1).toLowerCase() %></div>
+        <div class="items">
+          <% let i = 0 %>
+          <% for (const item of categories[category]) { %>
+            <img class="item" draggable="true" ondragstart="itemDragStart(event)" src="https://github.com/Jens-Co/MinecraftItemImages/raw/main/1.19/<%= item %>.png" alt="<%= item %>" id="<%= item %>">
+            <% i++ %>
+          <% } %>
+          <% let remaining = (Math.ceil(i / 10) * 10) - i %>
+          <% remaining = remaining === 0 ? 10 : remaining %>
+          <% for (let index = 0; index < remaining; index++) { %>
+            <span class="item"></span>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

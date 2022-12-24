@@ -1,0 +1,70 @@
+function itemDragStart (event) {
+  event
+    .dataTransfer
+    .setData('text/plain', event.target.id)
+}
+
+function categoryDragOver (event) {
+  event.preventDefault()
+}
+
+function categoryDrop (event) {
+  const id = event
+    .dataTransfer
+    .getData('text')
+
+  const draggableElement = document.getElementById(id)
+  const oldItems = draggableElement.closest('.items')
+
+  const items = event.target.closest('.category').querySelector('.items')
+
+  items.appendChild(draggableElement)
+
+  sortSlots(oldItems)
+  sortSlots(items)
+
+  event
+    .dataTransfer
+    .clearData()
+}
+
+function sortSlots (items) {
+  items.querySelectorAll('span.item').forEach(element => {
+    element.remove()
+  })
+
+  const itemCount = items.children.length
+  let remaining = (Math.ceil(itemCount / 10) * 10) - itemCount
+  remaining = remaining === 0 ? 10 : remaining
+
+  for (let index = 0; index < remaining; index++) {
+    items.innerHTML += '<span class="item"></span>'
+  }
+}
+
+function newCategory () {
+  let id = prompt('Enter a name for the new category')
+
+  if (id == null) return
+  id = id.toUpperCase()
+  document.querySelector('main').innerHTML += `<div class="category" id="${id}" ondragover="categoryDragOver(event)" ondrop="categoryDrop(event)"><div class="title">${id.charAt(0).toUpperCase() + id.substr(1).toLowerCase()}</div><div class="items"></div></div>`
+  sortSlots(document.querySelector(`#${id} .items`))
+}
+
+function saveCategories () {
+  const newData = {}
+  document.querySelectorAll('.category').forEach(category => {
+    newData[category.id] = []
+    category.querySelectorAll('img.item').forEach(item => {
+      newData[category.id].push(item.id)
+    })
+  })
+
+  fetch('/save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newData)
+  }).then(() => { window.location.reload() }).catch((e) => { alert('Unable to save category data!\n' + e.message.trim()) })
+}
