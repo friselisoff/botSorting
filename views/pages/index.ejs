@@ -23,7 +23,7 @@
         <div class="items">
           <% let i = 0 %>
           <% for (const item of categories[category]) { %>
-            <img class="item" draggable="true" ondragstart="itemDragStart(event)" src="https://github.com/Jens-Co/MinecraftItemImages/raw/main/1.19/<%= item %>.png" alt="<%= item %>" id="<%= item %>">
+            <img class="item" draggable="true" ondragstart="itemDragStart(event)" src="https://github.com/Jens-Co/MinecraftItemImages/raw/main/1.19/<%= item %>.png" alt="<%= item %>" id="<%= item %>" title="<%= item %>">
             <% i++ %>
           <% } %>
           <% let remaining = (Math.ceil(i / 10) * 10) - i %>
