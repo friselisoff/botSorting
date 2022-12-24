@@ -55,6 +55,10 @@ bot.on('login', () => {
 })
 
 // Log errors and kick reasons:
+bot.on('end', (reason, loggedIn) => {
+  console.log(reason, loggedIn)
+  process.exit()
+})
 bot.on('kicked', (reason, loggedIn) => {
   console.log(reason, loggedIn)
   process.exit()
