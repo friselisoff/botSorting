@@ -21,7 +21,7 @@ module.exports = bot => {
   })
 
   app.post('/save', (req, res) => {
-    console.log('Got new category data', req.body)
+    console.log('Got new category data, saving')
     fs.writeFileSync(sortingCategoryFile, JSON.stringify(req.body, null, 2))
     res.json({ success: true })
   })

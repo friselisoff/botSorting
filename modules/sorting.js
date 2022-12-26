@@ -77,6 +77,7 @@ module.exports = bot => {
         }))
 
         await genericHelper.sleep(500)
+        let changed = false
         const sortingCategoryRawCopy = { ...sortingCategoryRaw }
         const selectedCategories = []
         for (const item of sortChest.containerItems()) {
@@ -88,11 +89,12 @@ module.exports = bot => {
 
             await sortChest.withdraw(item.type, null, item.count).catch(() => {})
           } else if (!sortingCategoryRawCopy['Not Sorted'].includes(item.name)) {
+            changed = true
             sortingCategoryRawCopy['Not Sorted'].push(item.name)
           }
         }
 
-        fs.writeFileSync(sortingCategoryFile, JSON.stringify(sortingCategoryRawCopy, null, 2))
+        if (changed) fs.writeFileSync(sortingCategoryFile, JSON.stringify(sortingCategoryRawCopy, null, 2))
 
         await genericHelper.sleep(1000)
 
