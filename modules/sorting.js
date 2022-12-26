@@ -35,11 +35,13 @@ module.exports = bot => {
         return null
       }
 
+      // Find the comparator
       const comparator = bot.findBlock({
         point: bot.entity.position,
         matching: (block) => block.name === 'comparator'
       })
 
+      // Find the signs
       if (comparator && !isSorting && comparator._properties.powered) {
         isSorting = true
         const signs = bot.findBlocks({
@@ -66,17 +68,22 @@ module.exports = bot => {
           return [signBlock, bot.blockAt(e.offset(chestOffset.x * 3, 1, chestOffset.z * 3))]
         })
 
+        // Goto the sorting chest/comparator
         await bot.pathfinder.goto(new GoalGetToBlock(comparator.position.x - 1, comparator.position.y, comparator.position.z))
 
+        // Get the sort chest and open it
         const sortChestOffset = CARDINALS[comparator._properties.facing]
         const sortChestBlock = bot.blockAt(comparator.position.offset(sortChestOffset.x, 0, sortChestOffset.z))
         const sortChest = await bot.openChest(sortChestBlock)
 
+        // Dump any unsorted items we have into the sort chest
         await Promise.all(bot.inventory.items().map(async e => {
           await sortChest.deposit(e.type, null, e.count).catch(console.error)
         }))
 
         await genericHelper.sleep(500)
+
+        // Go over all the items to sort and find the stored category for each
         let changed = false
         const sortingCategoryRawCopy = { ...sortingCategoryRaw }
         const selectedCategories = []
@@ -87,13 +94,16 @@ module.exports = bot => {
               selectedCategories.push(cat)
             }
 
+            // We know the category so take the item
             await sortChest.withdraw(item.type, null, item.count).catch(() => {})
           } else if (!sortingCategoryRawCopy['Not Sorted'].includes(item.name)) {
+            // We dont know the category so add the item to not sorted
             changed = true
             sortingCategoryRawCopy['Not Sorted'].push(item.name)
           }
         }
 
+        // If the categories have changed then save the file
         if (changed) fs.writeFileSync(sortingCategoryFile, JSON.stringify(sortingCategoryRawCopy, null, 2))
 
         await genericHelper.sleep(1000)
@@ -101,12 +111,14 @@ module.exports = bot => {
         sortChest.close()
 
         if (selectedCategories.length !== 0) {
+          // Handle each category item
           for (const selectedCat of selectedCategories) {
             const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1].toUpperCase() === selectedCat)
 
             if (selectedSign) {
               await bot.pathfinder.goto(new GoalGetToBlock(selectedSign[1].position.x - 1, selectedSign[1].position.y, selectedSign[1].position.z))
 
+              // Open the category chest and store the items for that chest
               const blockchest = bot.blockAt(selectedSign[1].position)
               const chest = await bot.openChest(blockchest)
               await Promise.all(bot.inventory.items().map(async e => {
