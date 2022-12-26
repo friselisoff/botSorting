@@ -113,7 +113,7 @@ module.exports = bot => {
                 const cat = findCategory(e.name)
                 if (cat) {
                   if (cat === selectedCat) {
-                    await chest.deposit(e.type, null, e.count).catch(console.error)
+                    await chest.deposit(e.type, null, e.count).catch(() => {})
                   }
                 }
               }))
