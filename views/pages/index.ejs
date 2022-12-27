@@ -12,13 +12,23 @@
 <body>
   <header>
     <h1>Sorting Bot Categories</h1>
-    <a class='btn' href="/">Refresh</a>
-    <a class='btn' href="#" onclick="newCategory()">New</a>
-    <a class='btn' href="#" onclick="saveCategories()">Save</a>
+    <div class="actions">
+      <div>
+        <a class='btn' href="/">Refresh</a>
+      </div>
+      <div>
+        <a class='btn' href="#" onclick="newCategory()">New category</a>
+        <a class='btn' href="#" onclick="saveCategories()">Save categories</a>
+      </div>
+      <div>
+        <a class='btn' href="#" onclick="addItem()">Add item</a>
+        <span class='remove' href="#" ondragover="dragOver(event)" ondrop="removeDrop(event)">Remove item</span>
+      </div>
+    </div>
   </header>
   <main>
     <% for (const category in categories) { %>
-      <div class="category" id="<%= category %>" ondragover="categoryDragOver(event)" ondrop="categoryDrop(event)">
+      <div class="category" id="<%= category %>" ondragover="dragOver(event)" ondrop="categoryDrop(event)">
         <div class="title"><%= category.charAt(0).toUpperCase() + category.substr(1).toLowerCase() %></div>
         <div class="items">
           <% let i = 0 %>

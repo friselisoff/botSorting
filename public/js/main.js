@@ -4,7 +4,7 @@ function itemDragStart (event) {
     .setData('text/plain', event.target.id)
 }
 
-function categoryDragOver (event) {
+function dragOver (event) {
   event.preventDefault()
 }
 
@@ -22,6 +22,23 @@ function categoryDrop (event) {
 
   sortSlots(oldItems)
   sortSlots(items)
+
+  event
+    .dataTransfer
+    .clearData()
+}
+
+function removeDrop (event) {
+  const id = event
+    .dataTransfer
+    .getData('text')
+
+  const draggableElement = document.getElementById(id)
+  const oldItems = draggableElement.closest('.items')
+
+  draggableElement.remove()
+
+  sortSlots(oldItems)
 
   event
     .dataTransfer
@@ -67,4 +84,17 @@ function saveCategories () {
     },
     body: JSON.stringify(newData)
   }).then(() => { window.location.reload() }).catch((e) => { alert('Unable to save category data!\n' + e.message.trim()) })
+}
+
+function addItem () {
+  let id = prompt('Enter a name for the new item')
+
+  if (id == null) return
+  id = id.toLowerCase()
+  id = id.replaceAll(' ', '_')
+
+  const items = document.getElementById('Not Sorted').querySelector('.items')
+  items.innerHTML += `<img class="item" draggable="true" ondragstart="itemDragStart(event)" src="https://github.com/Jens-Co/MinecraftItemImages/raw/main/1.19/${id}.png" alt="${id}" id="${id}" title="${id}">`
+
+  sortSlots(items)
 }

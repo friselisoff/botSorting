@@ -20,6 +20,12 @@ header {
   padding-bottom: 5px;
 }
 
+.actions {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
 .btn {
   color: #FFFFFF;
   background-color: #3498DB;
@@ -32,6 +38,14 @@ header {
 
 .btn:active {
   background-color: #2980B9;
+}
+
+.remove {
+  color: #FF0000;
+  padding: 5px;
+  border: 2px solid #FF0000;
+  border-radius: 5px;
+  cursor: not-allowed;
 }
 
 main {
