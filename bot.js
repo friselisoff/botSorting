@@ -33,6 +33,7 @@ injectModules(bot)
 bot.on('login', () => {
   const defaultMove = new Movements(bot)
   defaultMove.canDig = false
+  defaultMove.allow1by1towers = false
   bot.pathfinder.setMovements(defaultMove)
 
   // Round positions to bypass the anti-human check
