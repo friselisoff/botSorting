@@ -34,6 +34,8 @@ bot.on('login', () => {
   const defaultMove = new Movements(bot)
   defaultMove.canDig = false
   defaultMove.allow1by1towers = false
+  defaultMove.placeCost = 101
+  defaultMove.digCost = 101
   bot.pathfinder.setMovements(defaultMove)
 
   // Round positions to bypass the anti-human check
