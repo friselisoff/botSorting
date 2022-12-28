@@ -78,7 +78,7 @@ module.exports = bot => {
 
         // Dump any unsorted items we have into the sort chest
         await Promise.all(bot.inventory.items().map(async e => {
-          await sortChest.deposit(e.type, null, e.count).catch(console.error)
+          await sortChest.deposit(e.type, null, e.count).catch(() => {})
         }))
 
         await genericHelper.sleep(500)
