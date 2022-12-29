@@ -64,7 +64,7 @@ function newCategory () {
 
   if (id == null) return
   id = id.toUpperCase()
-  document.querySelector('main').innerHTML += `<div class="category" id="${id}" ondragover="categoryDragOver(event)" ondrop="categoryDrop(event)"><div class="title">${id.charAt(0).toUpperCase() + id.substr(1).toLowerCase()}</div><div class="items"></div></div>`
+  document.querySelector('main').innerHTML += `<div class="category" id="${id}" ondragover="dragOver(event)" ondrop="categoryDrop(event)"><div class="title">${id.charAt(0).toUpperCase() + id.substr(1).toLowerCase()}</div><div class="items"></div></div>`
   sortSlots(document.querySelector(`#${id} .items`))
 }
 
