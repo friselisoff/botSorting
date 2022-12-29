@@ -7,7 +7,7 @@ const GenericHelpers = require('../GenericHelpers')
  * @param {mineflayer.Bot} bot // to enable intellisense
  */
 module.exports = bot => {
-  bot.on('handleChat', (username, message, reply) => {
+  bot.on('handleChat', (username, message, isWhisper, reply) => {
     if (message.split(' ')[0] !== '!sleep') return
 
     // Find the bed

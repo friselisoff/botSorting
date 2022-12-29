@@ -5,7 +5,7 @@ const mineflayer = require('mineflayer') // eslint-disable-line
  */
 module.exports = bot => {
   // Simple command to let people know we are a bot
-  bot.on('handleChat', (username, message, reply) => {
+  bot.on('handleChat', (username, message, isWhisper, reply) => {
     if (message.split(' ')[0] !== '!bot') return
     reply('[iambot]')
   })
