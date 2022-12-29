@@ -40,7 +40,17 @@ module.exports = bot => {
         matching: (block) => block.name === 'comparator'
       })
 
-      if (!(comparator && !bot.waitingForAction && comparator._properties.powered)) return
+      if (!comparator) {
+        console.log('Unable to locate comparator')
+        return
+      }
+
+      if (bot.waitingForAction) {
+        console.log('Skipping sort due to already doing something')
+        return
+      }
+
+      if (!comparator._properties.powered) return
 
       bot.waitingForAction = true
 
@@ -112,6 +122,8 @@ module.exports = bot => {
       sortChest.close()
 
       if (selectedCategories.length !== 0) {
+        console.log('Sorting: ' + JSON.stringify(selectedCategories))
+
         // Handle each category item
         for (const selectedCat of selectedCategories) {
           const selectedSign = signs.find(e => e[0].signText.trim().match(categoryRegex)[1].toUpperCase() === selectedCat)
@@ -139,6 +151,8 @@ module.exports = bot => {
             // TODO Return item back to sort chest
           }
         }
+
+        console.log('Finished sorting')
       }
       // console.log(signs.map(e => e[0].signText.trim()), signs.map(e => e[1].name), signs.length)
       bot.waitingForAction = false
