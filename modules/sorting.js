@@ -101,7 +101,7 @@ module.exports = bot => {
       for (const item of sortChest.containerItems()) {
         const cat = findCategory(item.name)
         if (cat) {
-          if (!(cat in selectedCategories)) {
+          if (!(selectedCategories.includes(cat))) {
             selectedCategories.push(cat)
           }
 
