@@ -14,6 +14,8 @@ const bot = mineflayer.createBot({
   physicsEnabled: true
 })
 
+bot.waitingForAction = false
+
 bot.loadPlugin(ChatHelper)
 bot.loadPlugin(pathfinder)
 
