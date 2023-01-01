@@ -1,5 +1,6 @@
 const { Vec3 } = require('vec3')
 const { sleep } = require('mineflayer/lib/promise_utils')
+const logger = require('./logger')
 
 exports.sleep = sleep
 
@@ -37,7 +38,7 @@ async function gotoPos (bot, pos) {
     for (let i = 1; i <= Math.ceil(dist / split); i++) {
       const pcg = ((100 / Math.ceil(dist / split)) * i) / 100
       const target = roundPos(lerpVec3(botPos, pos, pcg))
-      console.log(target, pcg, bot.entity.position.distanceTo(target))
+      logger.debug(target, pcg, bot.entity.position.distanceTo(target))
       bot.entity.position = target
       await sleep(100)
     }

@@ -2,6 +2,7 @@ const mineflayer = require('mineflayer') // eslint-disable-line
 
 const { GoalGetToBlock } = require('mineflayer-pathfinder').goals
 const genericHelper = require('../GenericHelpers')
+const logger = require('../logger')
 const fs = require('fs')
 const { Vec3 } = require('vec3')
 
@@ -41,16 +42,18 @@ module.exports = bot => {
       })
 
       if (!comparator) {
-        console.log('Unable to locate comparator')
+        logger.error('Unable to locate comparator')
         return
       }
 
       if (bot.waitingForAction) {
-        console.log('Skipping sort due to already doing something')
+        logger.warn('Skipping sort due to already doing something')
         return
       }
 
       if (!comparator._properties.powered) return
+
+      logger.info('Starting sort')
 
       bot.waitingForAction = true
 
@@ -122,7 +125,7 @@ module.exports = bot => {
       sortChest.close()
 
       if (selectedCategories.length !== 0) {
-        console.log('Sorting: ' + JSON.stringify(selectedCategories))
+        logger.info('Sorting: ' + JSON.stringify(selectedCategories))
 
         // Handle each category item
         for (const selectedCat of selectedCategories) {
@@ -147,14 +150,14 @@ module.exports = bot => {
 
             chest.close()
           } else {
-            console.log(`Unable to find category chest for '${selectedCat}'`)
+            logger.warn(`Unable to find category chest for '${selectedCat}'`)
             // TODO Return item back to sort chest
           }
         }
 
-        console.log('Finished sorting')
+        logger.info('Finished sorting')
       }
-      // console.log(signs.map(e => e[0].signText.trim()), signs.map(e => e[1].name), signs.length)
+      // logger.debug(signs.map(e => e[0].signText.trim()), signs.map(e => e[1].name), signs.length)
       bot.waitingForAction = false
     }, 1000)
   })

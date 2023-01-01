@@ -5,6 +5,7 @@ const ChatHelper = require('./ChatHelper')
 const GenericHelpers = require('./GenericHelpers')
 const fs = require('fs')
 const path = require('path')
+const logger = require('./logger')
 
 const bot = mineflayer.createBot({
   host: "65.109.165.130",
@@ -26,7 +27,7 @@ function injectModules (bot) {
     .filter(x => x.endsWith('.js')) // only use .js files
     .map(pluginName => require(path.join(MODULES_DIRECTORY, pluginName)))
 
-  console.log(`Loading ${modules.length} modules`)
+  logger.info(`Loading ${modules.length} modules`)
   bot.loadPlugins(modules)
 }
 
@@ -61,14 +62,14 @@ bot.on('login', () => {
 
 // Log errors and kick reasons:
 bot.on('end', (reason, loggedIn) => {
-  console.log(reason, loggedIn)
+  logger.error(reason, loggedIn)
   process.exit()
 })
 bot.on('kicked', (reason, loggedIn) => {
-  console.log(reason, loggedIn)
+  logger.error(reason, loggedIn)
   process.exit()
 })
 bot.on('error', (reason) => {
-  console.log(reason)
+  logger.error(reason)
   process.exit()
 })

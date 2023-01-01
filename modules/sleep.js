@@ -2,6 +2,7 @@ const mineflayer = require('mineflayer') // eslint-disable-line
 const { GoalGetToBlock } = require('mineflayer-pathfinder').goals
 
 const GenericHelpers = require('../GenericHelpers')
+const logger = require('../logger')
 
 /**
  * @param {mineflayer.Bot} bot // to enable intellisense
@@ -32,7 +33,7 @@ module.exports = bot => {
     bot.pathfinder.goto(new GoalGetToBlock(bedBlock.position.x, bedBlock.position.y, bedBlock.position.z)).then(async () => {
       bot.sleep(bedBlock).then(() => {
         reply('Going to sleep, sweet dreams. Zzz')
-      }).catch((e) => { console.log(e) /* Quietly fail */ }).finally(async () => {
+      }).catch((e) => { logger.error(e) /* Quietly fail */ }).finally(async () => {
         await GenericHelpers.sleep(100)
         bot.waitingForAction = false
       })
